@@ -693,7 +693,7 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         assert result.error is None
         assert result.path == test_path
-        exec_result = sandbox_backend.execute(f"cat {_quote(test_path)}")
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
         assert exec_result.output.strip() == content
 
     def test_write_existing_file_fails(
