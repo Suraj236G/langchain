@@ -32,10 +32,11 @@ def _launch_subprocess(
     preexec_fn: typing.Callable[[], None] | None,
     start_new_session: bool,
 ) -> subprocess.Popen[str]:
-    # The `errors` argument to Popen is only available on Python 3.6+.
-    # Guard its use with a version check to preserve compatibility.
+    # The `encoding` and `errors` arguments to Popen are only available on
+    # Python 3.6+. Guard their use with a version check to preserve compatibility.
     _extra: dict[str, typing.Any] = {}
     if sys.version_info >= (3, 6):
+        _extra["encoding"] = "utf-8"
         _extra["errors"] = "replace"
     return subprocess.Popen(  # noqa: S603
         list(command),
@@ -44,7 +45,6 @@ def _launch_subprocess(
         stderr=subprocess.PIPE,
         cwd=cwd,
         text=True,
-        encoding="utf-8",
         bufsize=1,
         env=env,
         preexec_fn=preexec_fn,  # noqa: PLW1509
