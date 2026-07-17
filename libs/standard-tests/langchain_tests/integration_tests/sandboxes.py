@@ -1199,7 +1199,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("ls_unicode", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(shlex.join(["mkdir", "-p", base_dir]))
         sandbox_backend.write(f"{base_dir}/测试文件.txt", "content")
         sandbox_backend.write(f"{base_dir}/файл.txt", "content")
 
