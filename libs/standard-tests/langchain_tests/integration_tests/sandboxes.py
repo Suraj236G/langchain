@@ -710,7 +710,7 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         assert result.error is not None
         assert "already exists" in result.error.lower()
-        exec_result = sandbox_backend.execute(f"cat {_quote(test_path)}")
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
         assert exec_result.output.strip() == "First content"
 
     def test_write_special_characters(
