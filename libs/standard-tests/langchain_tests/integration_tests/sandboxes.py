@@ -393,7 +393,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         assert upload_responses[0].path == test_path
         assert upload_responses[0].error is None
 
-        result = sandbox_backend.execute(f"cat {test_path}")
+        result = sandbox_backend.execute(f"cat {_quote(test_path)}")
         assert result.output.strip() == test_content.decode()
 
     def test_download_single_file(
