@@ -596,7 +596,9 @@ class SandboxIntegrationTests(BaseStandardTests):
         try:
             responses = sandbox_backend.download_files([test_path])
         finally:
-            sandbox_backend.execute(f"chmod 644 {_quote(test_path)} || true")
+            sandbox_backend.execute(
+                " ".join(["chmod", "644", _quote(test_path), "||", "true"])
+            )
 
         assert len(responses) == 1
         assert responses[0].path == test_path
