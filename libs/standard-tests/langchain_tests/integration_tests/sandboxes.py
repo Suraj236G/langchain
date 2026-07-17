@@ -536,7 +536,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         upload_responses = sandbox_backend.upload_files([(test_path, test_content)])
         assert upload_responses == [FileUploadResponse(path=test_path, error=None)]
 
-        exec_result = sandbox_backend.execute(f"wc -c {_quote(test_path)}")
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-c", test_path]))
         assert exec_result.exit_code == 0
         assert str(len(test_content)) in exec_result.output
 
