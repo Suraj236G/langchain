@@ -644,7 +644,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         )
         path = f"{dir_path}/deepagents_test_upload.txt"
         content = b"nope"
-        sandbox_backend.execute(f"rm -rf {dir_path}")
+        sandbox_backend.execute(f"rm -rf {_quote(dir_path)}")
 
         responses = sandbox_backend.upload_files([(path, content)])
         assert len(responses) == 1
