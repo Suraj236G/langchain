@@ -1178,7 +1178,9 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         base_dir = self.sandbox_path("ls_nested", root_dir=sandbox_test_root)
         sandbox_backend.execute(
-            f"mkdir -p {_quote(base_dir)}/subdir && touch {_quote(base_dir)}/root.txt"
+            shlex.join(["mkdir", "-p", f"{base_dir}/subdir"])
+            + " && "
+            + shlex.join(["touch", f"{base_dir}/root.txt"])
         )
 
         result = sandbox_backend.ls(base_dir)
