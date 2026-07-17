@@ -462,11 +462,8 @@ class SQLiteEntityStore(BaseEntityStore):
     @override
     def clear(self) -> None:
         # Ignore S608 since we validate for malicious table/session names in `__init__`
-        query = f"""
-            DELETE FROM {self.full_table_name}
-        """  # noqa: S608
-        with self.conn:
-            self.conn.execute(query)
+        query = f'DELETE FROM "{self.full_table_name}"'  # noqa: S608
+        self._execute_query(query)
 
 
 @deprecated(
