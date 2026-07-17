@@ -590,13 +590,13 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         test_path = self.sandbox_path("test_no_read.txt", root_dir=sandbox_test_root)
         sandbox_backend.execute(
-            f"rm -f {test_path} && echo secret > {test_path} && chmod 000 {test_path}"
+            f"rm -f {_quote(test_path)} && echo secret > {_quote(test_path)} && chmod 000 {_quote(test_path)}"
         )
 
         try:
             responses = sandbox_backend.download_files([test_path])
         finally:
-            sandbox_backend.execute(f"chmod 644 {test_path} || true")
+            sandbox_backend.execute(f"chmod 644 {_quote(test_path)} || true")
 
         assert len(responses) == 1
         assert responses[0].path == test_path
