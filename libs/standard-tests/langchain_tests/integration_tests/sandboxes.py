@@ -831,7 +831,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(f"wc -l {_quote(test_path)}")
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))
         assert "5" in exec_result.output
 
     def test_read_nonexistent_file(
