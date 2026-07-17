@@ -745,9 +745,9 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, "")
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(
-            f"[ -f {_quote(test_path)} ] && echo exists || echo missing"
-        )
+        quoted_path = _quote(test_path)
+        cmd = f"[ -f {quoted_path} ] && echo exists || echo missing"
+        exec_result = sandbox_backend.execute(cmd)
         assert "exists" in exec_result.output
 
     def test_write_path_with_spaces(
