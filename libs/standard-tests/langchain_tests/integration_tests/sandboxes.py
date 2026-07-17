@@ -765,7 +765,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(f"cat {_quote(test_path)}")
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
         assert exec_result.output.strip() == content
 
     def test_write_unicode_content(
