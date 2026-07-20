@@ -1436,7 +1436,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         assert len(result.matches) == 1
         assert result.matches[0]["text"] == "Hello"
 
-    def test_grep_with_special_characters(  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+    def test_grep_with_special_characters(
         self, sandbox_backend: SandboxBackendProtocol, sandbox_test_root: str
     ) -> None:
         """Grep should treat special characters in the pattern literally."""
