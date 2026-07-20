@@ -1367,7 +1367,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_multi", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(
             f"{base_dir}/fruits.txt", "apple\nbanana\napple\norange\napple"
         )
@@ -1387,7 +1387,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_literal", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/numbers.txt", "test123\ntest456\nabcdef")
 
         result = sandbox_backend.grep("test123", path=base_dir)
@@ -1405,7 +1405,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_unicode", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(
             f"{base_dir}/unicode.txt",
             "Hello 世界\nПривет мир\n测试 pattern",  # noqa: RUF001
@@ -1426,7 +1426,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_case", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/case.txt", "Hello\nhello\nHELLO")
 
         result = sandbox_backend.grep("Hello", path=base_dir)
@@ -1444,7 +1444,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_special", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(
             f"{base_dir}/special.txt", "Price: $100\nPath: /usr/bin\nPattern: [a-z]*"
         )
@@ -1470,7 +1470,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_empty_dir", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
 
         result = sandbox_backend.grep("anything", path=base_dir)
 
@@ -1523,7 +1523,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("grep_multiline", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         content = "\n".join([f"Line {i}" for i in range(1, 101)])
         sandbox_backend.write(f"{base_dir}/long.txt", content)
 
@@ -1542,7 +1542,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("glob_test", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/file1.txt", "content")
         sandbox_backend.write(f"{base_dir}/file2.txt", "content")
         sandbox_backend.write(f"{base_dir}/file3.py", "content")
@@ -1588,7 +1588,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("glob_empty", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/file.txt", "content")
 
         result = sandbox_backend.glob("*.py", path=base_dir)
@@ -1627,7 +1627,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("glob_hidden", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/.hidden1", "content")
         sandbox_backend.write(f"{base_dir}/.hidden2", "content")
         sandbox_backend.write(f"{base_dir}/visible.txt", "content")
@@ -1648,7 +1648,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("glob_charclass", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/file1.txt", "content")
         sandbox_backend.write(f"{base_dir}/file2.txt", "content")
         sandbox_backend.write(f"{base_dir}/file3.txt", "content")
@@ -1673,7 +1673,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("glob_question", root_dir=sandbox_test_root)
-        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")
+        sandbox_backend.execute(f"mkdir -p {_quote(base_dir)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         sandbox_backend.write(f"{base_dir}/file1.txt", "content")
         sandbox_backend.write(f"{base_dir}/file2.txt", "content")
         sandbox_backend.write(f"{base_dir}/file10.txt", "content")
