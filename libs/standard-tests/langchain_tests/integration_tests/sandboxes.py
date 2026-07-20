@@ -226,7 +226,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         command = "python -c \"import sys; sys.stdout.write('x' * (500 * 1024))\""
-        result = sandbox_backend.execute(command)
+        result = sandbox_backend.execute(command)  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; command is a hardcoded literal string
 
         assert result.exit_code == 0
         assert result.truncated is False
@@ -536,7 +536,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         upload_responses = sandbox_backend.upload_files([(test_path, test_content)])
         assert upload_responses == [FileUploadResponse(path=test_path, error=None)]
 
-        exec_result = sandbox_backend.execute(shlex.join(["wc", "-c", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-c", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.exit_code == 0
         assert str(len(test_content)) in exec_result.output
 
@@ -693,7 +693,7 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         assert result.error is None
         assert result.path == test_path
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == content
 
     def test_write_existing_file_fails(
@@ -710,7 +710,7 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         assert result.error is not None
         assert "already exists" in result.error.lower()
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == "First content"
 
     def test_write_special_characters(
@@ -730,7 +730,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == content
 
     def test_write_empty_file(
@@ -765,7 +765,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == content
 
     def test_write_unicode_content(
@@ -781,7 +781,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == content
 
     def test_write_consecutive_slashes_in_path(
@@ -797,7 +797,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert exec_result.output.strip() == content
 
     def test_write_very_long_content(
@@ -831,7 +831,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         assert "5" in exec_result.output
 
     def test_read_nonexistent_file(
@@ -1199,7 +1199,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             pytest.skip("Sync tests not supported.")
 
         base_dir = self.sandbox_path("ls_unicode", root_dir=sandbox_test_root)
-        sandbox_backend.execute(shlex.join(["mkdir", "-p", base_dir]))
+        sandbox_backend.execute(shlex.join(["mkdir", "-p", base_dir]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
         sandbox_backend.write(f"{base_dir}/测试文件.txt", "content")
         sandbox_backend.write(f"{base_dir}/файл.txt", "content")
 
@@ -1706,7 +1706,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         assert write_result.error is None
         assert write_result.path == test_path
 
-        exec_result = await sandbox_backend.aexecute(f"wc -c {_quote(test_path)}")
+        exec_result = await sandbox_backend.aexecute(f"wc -c {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         assert exec_result.exit_code == 0
         assert str(len(test_content.encode("utf-8"))) in exec_result.output
 
@@ -1939,7 +1939,7 @@ class SandboxIntegrationTests(BaseStandardTests):
             tasks: list[asyncio.Task[ExecuteResponse]] = []
             async with asyncio.TaskGroup() as tg:
                 tasks.extend(
-                    tg.create_task(sandbox_backend.aexecute(command)) for _ in range(5)
+                    tg.create_task(sandbox_backend.aexecute(command)) for _ in range(5)  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; command is a hardcoded literal string
                 )
 
             for task in tasks:
@@ -1972,7 +1972,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         )
         assert upload_responses == [FileUploadResponse(path=test_path, error=None)]
 
-        exec_result = await sandbox_backend.aexecute(f"wc -c {_quote(test_path)}")
+        exec_result = await sandbox_backend.aexecute(f"wc -c {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
         assert exec_result.exit_code == 0
         assert str(len(test_content)) in exec_result.output
 
