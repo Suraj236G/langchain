@@ -13,6 +13,23 @@ ALLOWED_TOP_LEVEL_PKGS = {
 }
 
 
+def _assert_allowed_module(module_path: str) -> None:
+    """Raise AssertionError if *module_path* is not in an allowed package.
+
+    This whitelist guard must be called immediately before every
+    ``importlib.import_module()`` invocation so that only known-safe,
+    internally-defined module paths can be imported, preventing arbitrary
+    code execution via dynamic imports.
+    """
+    top_level = module_path.split(".")[0]
+    if top_level not in ALLOWED_TOP_LEVEL_PKGS:
+        msg = (
+            f"Importing from {module_path!r} is not allowed. "
+            f"Allowed top-level packages are: {ALLOWED_TOP_LEVEL_PKGS}"
+        )
+        raise AssertionError(msg)
+
+
 def create_importer(
     package: str,
     *,
@@ -62,12 +79,7 @@ def create_importer(
         # If not in interactive env, raise warning.
         if all_module_lookup and name in all_module_lookup:
             new_module = all_module_lookup[name]
-            if new_module.split(".")[0] not in ALLOWED_TOP_LEVEL_PKGS:
-                msg = (
-                    f"Importing from {new_module} is not allowed. "
-                    f"Allowed top-level packages are: {ALLOWED_TOP_LEVEL_PKGS}"
-                )
-                raise AssertionError(msg)
+            _assert_allowed_module(new_module)
 
             try:
                 module = importlib.import_module(new_module)
@@ -116,12 +128,7 @@ def create_importer(
             return result
 
         if fallback_module:
-            if fallback_module.split(".")[0] not in ALLOWED_TOP_LEVEL_PKGS:
-                msg = (
-                    f"Importing from {fallback_module} is not allowed. "
-                    f"Allowed top-level packages are: {ALLOWED_TOP_LEVEL_PKGS}"
-                )
-                raise AssertionError(msg)
+            _assert_allowed_module(fallback_module)
             try:
                 module = importlib.import_module(fallback_module)
                 result = getattr(module, name)
