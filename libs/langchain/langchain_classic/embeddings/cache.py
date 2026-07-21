@@ -25,19 +25,14 @@ from langchain_classic.storage.encoder_backed import EncoderBackedStore
 NAMESPACE_UUID = uuid.UUID(int=1985)
 
 
-def _sha1_hash_to_uuid(text: str) -> uuid.UUID:
-    """Return a UUID derived from *text* using SHA-1 (deterministic).
+def _sha256_hash_to_uuid(text: str) -> uuid.UUID:
+    """Return a UUID derived from *text* using SHA-256 (deterministic).
 
-    Deterministic and fast, **but not collision-resistant**.
-
-    A malicious attacker could try to create two different texts that hash to the same
-    UUID. This may not necessarily be an issue in the context of caching embeddings,
-    but new applications should swap this out for a stronger hash function like
-    xxHash, BLAKE2 or SHA-256, which are collision-resistant.
+    Deterministic and collision-resistant, suitable for use as a cache key.
     """
-    sha1_hex = hashlib.sha1(text.encode("utf-8"), usedforsecurity=False).hexdigest()
+    sha256_hex = hashlib.sha256(text.encode("utf-8")).hexdigest()
     # Embed the hex string in `uuid5` to obtain a valid UUID.
-    return uuid.uuid5(NAMESPACE_UUID, sha1_hex)
+    return uuid.uuid5(NAMESPACE_UUID, sha256_hex)
 
 
 def _make_default_key_encoder(namespace: str, algorithm: str) -> Callable[[str], str]:
@@ -60,7 +55,7 @@ def _make_default_key_encoder(namespace: str, algorithm: str) -> Callable[[str],
     def _key_encoder(key: str) -> str:
         """Encode a key using the specified algorithm."""
         if algorithm == "sha1":
-            return f"{namespace}{_sha1_hash_to_uuid(key)}"
+            return f"{namespace}{_sha256_hash_to_uuid(key)}"
         if algorithm == "blake2b":
             return f"{namespace}{hashlib.blake2b(key.encode('utf-8')).hexdigest()}"
         if algorithm == "sha256":
