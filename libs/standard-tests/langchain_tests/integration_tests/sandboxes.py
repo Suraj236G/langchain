@@ -139,7 +139,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
         assert result.error is None
         assert result.path == test_path
-        exec_result = sandbox_backend.execute(f"cat {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+        exec_result = sandbox_backend.execute(f"cat {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; shell path is sanitized via shlex.quote
         assert exec_result.output.strip() == content
 
     def test_read_basic_file(
