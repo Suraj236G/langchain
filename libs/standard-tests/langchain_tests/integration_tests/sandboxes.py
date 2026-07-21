@@ -393,7 +393,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         assert upload_responses[0].path == test_path
         assert upload_responses[0].error is None
 
-        result = sandbox_backend.execute(f"cat {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+        result = sandbox_backend.execute(f"cat {_quote(test_path)}")  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; shell path is sanitized via shlex.quote
         assert result.output.strip() == test_content.decode()
 
     def test_download_single_file(
