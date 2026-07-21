@@ -596,7 +596,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         try:
             responses = sandbox_backend.download_files([test_path])
         finally:
-            sandbox_backend.execute(  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+            sandbox_backend.execute(  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; shell path is sanitized via shlex.quote
                 " ".join(["chmod", "644", _quote(test_path), "||", "true"])
             )
 
