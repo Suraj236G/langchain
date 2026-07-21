@@ -33,7 +33,8 @@ def import_attr(
         package: The name of the package where the module is located.
 
     Raises:
-        ValueError: If *attr_name* or *module_name* are not valid Python identifiers.
+        ValueError: If *attr_name*, *module_name*, or *package* are not valid
+            Python identifiers.
         ImportError: If the module cannot be found.
         AttributeError: If the attribute does not exist in the module or package.
 
@@ -45,6 +46,8 @@ def import_attr(
     _validate_python_name(attr_name, "attr_name")
     if module_name is not None and module_name != "__module__":
         _validate_python_name(module_name, "module_name")
+    if package is not None:
+        _validate_python_name(package, "package")
 
     if module_name == "__module__" or module_name is None:
         try:
