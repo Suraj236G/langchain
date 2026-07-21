@@ -536,7 +536,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         upload_responses = sandbox_backend.upload_files([(test_path, test_content)])
         assert upload_responses == [FileUploadResponse(path=test_path, error=None)]
 
-        exec_result = sandbox_backend.execute(shlex.join(["wc", "-c", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-c", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; args are passed via shlex.join
         assert exec_result.exit_code == 0
         assert str(len(test_content)) in exec_result.output
 
