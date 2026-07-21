@@ -537,11 +537,26 @@ class Reviver:
                 )
                 raise ValueError(msg)
             else:
-                # Otherwise, treat namespace as path.
-                import_dir = namespace
+                # Only allow import from path when the full mapping_key is present
+                # in the allowlist. This prevents arbitrary module loading from
+                # user-controlled path segments that are not in the static mappings.
+                msg = (
+                    "Trying to deserialize something that cannot "
+                    "be deserialized in current version of langchain-core: "
+                    f"{mapping_key}. Add an explicit entry to "
+                    "`additional_import_mappings` to allow this path."
+                )
+                raise ValueError(msg)
 
             # Validate import path is in trusted namespaces before importing
             if import_dir[0] not in self.valid_namespaces:
+                msg = f"Invalid namespace: {value}"
+                raise ValueError(msg)
+
+            # Validate every component of the resolved import path is a valid
+            # Python identifier to prevent path-traversal or injection via
+            # crafted module-path segments (e.g. ".", "..", "__import__", etc.).
+            if not all(part.isidentifier() for part in import_dir):
                 msg = f"Invalid namespace: {value}"
                 raise ValueError(msg)
 
@@ -554,6 +569,9 @@ class Reviver:
             if self.init_validator is not None:
                 self.init_validator(mapping_key, kwargs)
 
+            # import_dir is now guaranteed to come exclusively from the static
+            # self.import_mappings whitelist and every segment has been verified
+            # to be a valid Python identifier — safe to import.
             mod = importlib.import_module(".".join(import_dir))
 
             cls = getattr(mod, name)
