@@ -794,7 +794,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         test_path = self.sandbox_path("file.txt", root_dir=sandbox_test_root)
         content = "Content"
 
-        result = sandbox_backend.write(test_path, content)
+        result = sandbox_backend.write(test_path, content)  # nosemgrep: formatted-sql-query  # not SQL; args are plain strings, not SQL queries
 
         assert result.error is None
         exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; args are passed via shlex.join
@@ -831,7 +831,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         result = sandbox_backend.write(test_path, content)
 
         assert result.error is None
-        exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; args are passed via shlex.join
+        exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; args are passed via shlex.join
         assert "5" in exec_result.output
 
     def test_read_nonexistent_file(
