@@ -112,9 +112,21 @@ def _import_module(module: str, class_name: str) -> ModuleType:
         The imported module.
 
     Raises:
+        ValueError: If the module is not in the allowlist of known provider modules.
         ImportError: If the module cannot be imported, with a message suggesting
             the pip package to install.
     """
+    _ALLOWED_MODULES: frozenset[str] = frozenset(
+        pkg for pkg, _, _ in _BUILTIN_PROVIDERS.values()
+    ) | frozenset({"langchain_community.chat_models"})
+
+    if module not in _ALLOWED_MODULES:
+        msg = (
+            f"Importing '{module}' is not allowed. "
+            f"Only known LangChain provider modules may be imported."
+        )
+        raise ValueError(msg)
+
     try:
         return importlib.import_module(module)
     except ImportError as e:
