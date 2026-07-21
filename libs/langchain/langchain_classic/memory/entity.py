@@ -402,6 +402,10 @@ class SQLiteEntityStore(BaseEntityStore):
         self.conn = sqlite3.connect(db_file)
         self.session_id = session_id
         self.table_name = table_name
+        # Pre-compute a SQL-safe double-quoted identifier for the table name.
+        # Double-quotes within the identifier are escaped by doubling them (standard SQL).
+        _safe_name = self.full_table_name.replace('"', '""')
+        self._quoted_table_name = f'"{_safe_name}"'
         self._create_table_if_not_exists()
 
     @property
@@ -416,20 +420,20 @@ class SQLiteEntityStore(BaseEntityStore):
 
     def _create_table_if_not_exists(self) -> None:
         """Creates the entity table if it doesn't exist, using safe quoting."""
-        # Use standard SQL double quotes for the table name identifier
-        create_table_query = f"""
-            CREATE TABLE IF NOT EXISTS "{self.full_table_name}" (
-                key TEXT PRIMARY KEY,
-                value TEXT
-            )
-        """
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        # No user-supplied data is interpolated at query time.
+        create_table_query = (
+            "CREATE TABLE IF NOT EXISTS "
+            + self._quoted_table_name
+            + " (key TEXT PRIMARY KEY, value TEXT)"
+        )
         self._execute_query(create_table_query)
 
     def get(self, key: str, default: str | None = None) -> str | None:
         """Retrieves a value, safely quoting the table name."""
-        # `?` placeholder is used for the value to prevent SQL injection
-        # Ignore S608 since we validate for malicious table/session names in `__init__`
-        query = f'SELECT value FROM "{self.full_table_name}" WHERE key = ?'  # noqa: S608
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        # The `key` value is passed as a parameterized `?` placeholder.
+        query = "SELECT value FROM " + self._quoted_table_name + " WHERE key = ?"
         cursor = self._execute_query(query, (key,))
         result = cursor.fetchone()
         return result[0] if result is not None else default
@@ -438,31 +442,35 @@ class SQLiteEntityStore(BaseEntityStore):
         """Inserts or replaces a value, safely quoting the table name."""
         if not value:
             return self.delete(key)
-        # Ignore S608 since we validate for malicious table/session names in `__init__`
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        # The `key` and `value` data are passed as parameterized `?` placeholders.
         query = (
-            "INSERT OR REPLACE INTO "  # noqa: S608
-            f'"{self.full_table_name}" (key, value) VALUES (?, ?)'
+            "INSERT OR REPLACE INTO "
+            + self._quoted_table_name
+            + " (key, value) VALUES (?, ?)"
         )
         self._execute_query(query, (key, value))
         return None
 
     def delete(self, key: str) -> None:
         """Deletes a key-value pair, safely quoting the table name."""
-        # Ignore S608 since we validate for malicious table/session names in `__init__`
-        query = f'DELETE FROM "{self.full_table_name}" WHERE key = ?'  # noqa: S608
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        # The `key` value is passed as a parameterized `?` placeholder.
+        query = "DELETE FROM " + self._quoted_table_name + " WHERE key = ?"
         self._execute_query(query, (key,))
 
     def exists(self, key: str) -> bool:
         """Checks for the existence of a key, safely quoting the table name."""
-        # Ignore S608 since we validate for malicious table/session names in `__init__`
-        query = f'SELECT 1 FROM "{self.full_table_name}" WHERE key = ? LIMIT 1'  # noqa: S608
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        # The `key` value is passed as a parameterized `?` placeholder.
+        query = "SELECT 1 FROM " + self._quoted_table_name + " WHERE key = ? LIMIT 1"
         cursor = self._execute_query(query, (key,))
         return cursor.fetchone() is not None
 
     @override
     def clear(self) -> None:
-        # Ignore S608 since we validate for malicious table/session names in `__init__`
-        query = f'DELETE FROM "{self.full_table_name}"'  # noqa: S608
+        # Table name uses a pre-computed, double-quote-escaped SQL identifier.
+        query = "DELETE FROM " + self._quoted_table_name
         self._execute_query(query)
 
 
