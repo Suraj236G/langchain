@@ -5,6 +5,7 @@ import datetime
 import functools
 import importlib
 import os
+import re
 import warnings
 from collections.abc import Callable, Iterator, Sequence
 from importlib.metadata import version
@@ -131,6 +132,17 @@ def guard_import(
     Raises:
         ImportError: If the module is not installed.
     """
+    # Allowlist check: module_name must be a valid dotted Python identifier.
+    # This prevents untrusted input from loading arbitrary modules via
+    # importlib.import_module() (CWE-95 / non-literal-import).
+    _VALID_MODULE_RE = re.compile(r"^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$")
+    if not _VALID_MODULE_RE.match(module_name):
+        msg = (
+            f"Invalid module name '{module_name}'. "
+            "Module names must be valid dotted Python identifiers "
+            "(e.g. 'package', 'package.module')."
+        )
+        raise ValueError(msg)
     try:
         module = importlib.import_module(module_name, package)
     except (ImportError, ModuleNotFoundError) as e:
