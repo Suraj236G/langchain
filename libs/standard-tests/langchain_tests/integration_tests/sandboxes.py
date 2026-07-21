@@ -828,7 +828,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         test_path = self.sandbox_path("only_newlines.txt", root_dir=sandbox_test_root)
         content = "\n\n\n\n\n"
 
-        result = sandbox_backend.write(test_path, content)
+        result = sandbox_backend.write(test_path, content)  # nosemgrep: formatted-sql-query  # not SQL; args are plain strings, not SQL queries
 
         assert result.error is None
         exec_result = sandbox_backend.execute(shlex.join(["wc", "-l", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; args are passed via shlex.join
