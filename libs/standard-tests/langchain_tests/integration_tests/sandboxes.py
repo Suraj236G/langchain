@@ -644,7 +644,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         )
         path = f"{dir_path}/deepagents_test_upload.txt"
         content = b"nope"
-        sandbox_backend.execute(f"rm -rf {_quote(dir_path)}")  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+        sandbox_backend.execute(f"rm -rf {_quote(dir_path)}")  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; shell path is sanitized via shlex.quote
 
         responses = sandbox_backend.upload_files([(path, content)])
         assert len(responses) == 1
