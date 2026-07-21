@@ -82,6 +82,14 @@ def _get_embeddings_class_creator(provider: str) -> Callable[..., Embeddings]:
         raise ValueError(msg)
 
     module_name, class_name, creator_func = _BUILTIN_PROVIDERS[provider]
+
+    # Whitelist: only allow module names explicitly registered in _BUILTIN_PROVIDERS
+    # to prevent arbitrary code loading via importlib.import_module().
+    _ALLOWED_MODULES = {entry[0] for entry in _BUILTIN_PROVIDERS.values()}
+    if module_name not in _ALLOWED_MODULES:
+        msg = f"Module '{module_name}' is not in the list of allowed modules."
+        raise ValueError(msg)
+
     try:
         module = importlib.import_module(module_name)
     except ImportError as e:
