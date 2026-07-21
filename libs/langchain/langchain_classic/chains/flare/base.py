@@ -296,11 +296,9 @@ class FlareChain(Chain):
             current_max = getattr(llm, "max_completion_tokens", None)
             if current_max is not None and current_max != max_generation_len:
                 logger.debug(
-                    "FlareChain.from_llm: supplied llm max_completion_tokens=%s "
-                    "differs from requested max_generation_len=%s; "
-                    "leaving model unchanged.",
-                    current_max,
-                    max_generation_len,
+                    "FlareChain.from_llm: supplied llm max_completion_tokens "
+                    "differs from requested max_generation_len; "
+                    "leaving model unchanged."
                 )
         response_chain = PROMPT | llm
         question_gen_chain = QUESTION_GENERATOR_PROMPT | llm | StrOutputParser()
