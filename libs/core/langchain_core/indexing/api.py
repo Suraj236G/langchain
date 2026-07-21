@@ -43,8 +43,8 @@ T = TypeVar("T")
 
 def _hash_string_to_uuid(input_string: str) -> str:
     """Hashes a string and returns the corresponding UUID."""
-    hash_value = hashlib.sha1(
-        input_string.encode("utf-8"), usedforsecurity=False
+    hash_value = hashlib.sha256(
+        input_string.encode("utf-8")
     ).hexdigest()
     return str(uuid.uuid5(NAMESPACE_UUID, hash_value))
 
