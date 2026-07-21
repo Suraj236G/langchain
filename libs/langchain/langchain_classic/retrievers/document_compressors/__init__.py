@@ -26,9 +26,16 @@ _module_lookup = {
 }
 
 
+_ALLOWED_MODULE_PATHS = frozenset(_module_lookup.values())
+
+
 def __getattr__(name: str) -> Any:
     if name in _module_lookup:
-        module = importlib.import_module(_module_lookup[name])
+        module_path = _module_lookup[name]
+        if module_path not in _ALLOWED_MODULE_PATHS:
+            msg = f"Blocked import of non-whitelisted module: {module_path}"
+            raise ImportError(msg)
+        module = importlib.import_module(module_path)
         return getattr(module, name)
     msg = f"module {__name__} has no attribute {name}"
     raise AttributeError(msg)
