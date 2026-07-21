@@ -116,6 +116,12 @@ def create_importer(
             return result
 
         if fallback_module:
+            if fallback_module.split(".")[0] not in ALLOWED_TOP_LEVEL_PKGS:
+                msg = (
+                    f"Importing from {fallback_module} is not allowed. "
+                    f"Allowed top-level packages are: {ALLOWED_TOP_LEVEL_PKGS}"
+                )
+                raise AssertionError(msg)
             try:
                 module = importlib.import_module(fallback_module)
                 result = getattr(module, name)
