@@ -708,7 +708,7 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         result = sandbox_backend.write(test_path, "Second content")
 
-        assert result.error is not None
+        assert result.error is not None  # nosemgrep: formatted-sql-query  # not SQL; this assertion checks a sandbox write-conflict error message
         assert "already exists" in result.error.lower()
         exec_result = sandbox_backend.execute(shlex.join(["cat", test_path]))  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; args are passed via shlex.join
         assert exec_result.output.strip() == "First content"
