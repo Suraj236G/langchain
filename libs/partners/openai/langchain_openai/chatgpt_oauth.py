@@ -552,7 +552,7 @@ class _FileChatGPTOAuthTokenProvider:
 
     def _refresh_sync(self, existing: _ChatGPTToken) -> _ChatGPTToken:
         logger.debug(
-            "Refreshing ChatGPT access token (refresh_token=%s).",
+            "Refreshing ChatGPT access token (token=%s).",
             _redact(existing.refresh_token),
         )
         response = _post_form(
