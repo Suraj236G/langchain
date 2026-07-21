@@ -159,8 +159,8 @@ def _calculate_hash(
 ) -> str:
     """Return a hexadecimal digest of *text* using *algorithm*."""
     if algorithm == "sha1":
-        # Calculate the SHA-1 hash and return it as a UUID.
-        digest = hashlib.sha1(text.encode("utf-8"), usedforsecurity=False).hexdigest()
+        # SHA-1 is insecure; use SHA-256 instead to avoid collision vulnerabilities.
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
         return str(uuid.uuid5(NAMESPACE_UUID, digest))
     if algorithm == "blake2b":
         return hashlib.blake2b(text.encode("utf-8")).hexdigest()
