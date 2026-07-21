@@ -747,7 +747,7 @@ class SandboxIntegrationTests(BaseStandardTests):
         assert result.error is None
         quoted_path = _quote(test_path)
         cmd = f"[ -f {quoted_path} ] && echo exists || echo missing"
-        exec_result = sandbox_backend.execute(cmd)  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
+        exec_result = sandbox_backend.execute(cmd)  # nosemgrep: sqlalchemy-execute-raw-query,formatted-sql-query  # not SQLAlchemy/SQL; shell path is sanitized via shlex.quote
         assert "exists" in exec_result.output
 
     def test_write_path_with_spaces(
