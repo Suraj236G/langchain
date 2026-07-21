@@ -461,7 +461,7 @@ def _update_token_usage(
                     overall_token_usage.get(key, default), value
                 )
         return updated_token_usage
-    logger.warning("Unexpected type for token usage: %s", type(new_usage).__name__)
+    logger.warning("Unexpected type for token usage: " + type(new_usage).__name__)
     return new_usage
 
 
