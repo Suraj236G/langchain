@@ -1178,9 +1178,9 @@ class SandboxIntegrationTests(BaseStandardTests):
 
         base_dir = self.sandbox_path("ls_nested", root_dir=sandbox_test_root)
         sandbox_backend.execute(  # nosemgrep: sqlalchemy-execute-raw-query  # not SQLAlchemy; shell path is sanitized via shlex.quote
-            shlex.join(["mkdir", "-p", f"{base_dir}/subdir"])
+            shlex.join(["mkdir", "-p", base_dir + "/subdir"])
             + " && "
-            + shlex.join(["touch", f"{base_dir}/root.txt"])
+            + shlex.join(["touch", base_dir + "/root.txt"])
         )
 
         result = sandbox_backend.ls(base_dir)
